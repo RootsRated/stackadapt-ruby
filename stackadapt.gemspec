@@ -5,7 +5,7 @@ require 'stackadapt/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "stackadapt"
-  spec.version       = StackAdapt::VERSION
+  spec.version       = StackAdapt::version
   spec.authors       = ["RootsRated Media"]
   spec.email         = ["developers@rootsrated.com"]
 
