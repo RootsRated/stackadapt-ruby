@@ -1,5 +1,9 @@
-require "stackadapt/version"
+require 'stackadapt/core_ext/hash/symbolize_keys'
 
 module StackAdapt
-  # Your code goes here...
+  autoload :Error, 'stackadapt/error'
+  autoload :Model, 'stackadapt/model'
 end
+
+require 'stackadapt/version'
+require 'stackadapt/client'

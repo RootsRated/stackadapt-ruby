@@ -18,6 +18,10 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
+  spec.add_dependency 'addressable', '~> 2.3'
+  spec.add_dependency 'http', '~> 0.9.4'
+  spec.add_dependency 'http-form_data', '~> 1.0'
+
   spec.add_development_dependency "bundler", "~> 1.13"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.5"
