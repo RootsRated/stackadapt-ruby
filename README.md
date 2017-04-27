@@ -1,5 +1,7 @@
 # StackAdapt Ruby Gem
 
+[![CircleCI](https://circleci.com/gh/RootsRated/stackadapt-ruby.svg?style=svg&circle-token=e9300b1bdab6a080c3234c8b19ddfb6d5a829db1)](https://circleci.com/gh/RootsRated/stackadapt-ruby)
+
 A Ruby interface to the StackAdapt API
 
 ## Installation
