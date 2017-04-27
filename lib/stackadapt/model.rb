@@ -14,6 +14,15 @@ module StackAdapt
           end
         end
 
+        # Define method that retrieve the value from a nested attribute
+        #
+        # @param attr [Symbol]
+        # @param key_path [Array<Symbol>]
+        def nested_attr_reader(attr, *key_path)
+          define_attribute_method(attr, nil, key_path)
+          define_predicate_method(attr)
+        end
+
         # Define methods that retrieve the value from attributes
         # and serves them in a DateTime object
         #
