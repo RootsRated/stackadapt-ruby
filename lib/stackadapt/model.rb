@@ -14,6 +14,19 @@ module StackAdapt
           end
         end
 
+        # Define methods that retrieve the value from attributes
+        # and serves them in a DateTime object
+        #
+        # @param attrs [Array, Symbol]
+        def date_attr_reader(*attrs)
+          attrs.each do |attr|
+            define_method(attr) do
+              DateTime.parse nested_attr([attr])
+            end
+            define_predicate_method(attr)
+          end
+        end
+
         # Define object methods from attributes
         #
         # @param klass [Symbol]
