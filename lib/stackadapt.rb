@@ -1,3 +1,4 @@
+require 'stackadapt/core_ext/hash/reverse_merge'
 require 'stackadapt/core_ext/hash/symbolize_keys'
 
 module StackAdapt

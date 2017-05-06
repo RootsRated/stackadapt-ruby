@@ -103,6 +103,80 @@ describe StackAdapt::Model::Definitions do
     end
   end
 
+  describe "#attr_accessor(attrs)" do
+    context "when one attr is passed" do
+      let(:attrs) { { attr: nil } }
+
+      describe "reader and inflection methods" do
+        it "should call #attr_reader with the attr" do
+          expect(subject.class).to receive(:attr_reader).with(:attr)
+          StackAdapt::FakeModel.class_eval { attr_accessor :attr }
+        end
+      end
+
+      describe "writer method" do
+        before do
+          StackAdapt::FakeModel.class_eval do
+            attr_accessor :attr
+          end
+        end
+
+        it "should define a writer method on the model" do
+          expect(subject.respond_to?(:attr=)).to be_truthy
+        end
+
+        context "when a value is passed to the writer method" do
+          let(:new_value) { :new_attr_value }
+          before do
+            subject.attr = new_value
+          end
+
+          it "should update the attr on the model" do
+            expect(subject.public_send(:attr)).to eq(new_value)
+          end
+        end
+      end
+    end
+
+    context "when multiple attrs are passed" do
+      let(:attrs) { { attr1: nil, attr2: nil } }
+
+      describe "reader and inflection methods" do
+        it "should call #attr_reader with the attrs" do
+          expect(subject.class).to receive(:attr_reader).with(:attr1, :attr2)
+          StackAdapt::FakeModel.class_eval { attr_accessor :attr1, :attr2 }
+        end
+      end
+
+      describe "writer methods" do
+        before do
+          StackAdapt::FakeModel.class_eval do
+            attr_accessor :attr1, :attr2
+          end
+        end
+
+        it "should define writer methods for each attr on the model", :aggregate_failures do
+          expect(subject.respond_to?(:attr1=)).to be_truthy
+          expect(subject.respond_to?(:attr2=)).to be_truthy
+        end
+
+        context "when a value is passed to the writer methods" do
+          let(:new_value1) { :new_attr1_value }
+          let(:new_value2) { :new_attr2_value }
+          before do
+            subject.attr1 = new_value1
+            subject.attr2 = new_value2
+          end
+
+          it "should update the attrs on the model", :aggregate_failures do
+            expect(subject.public_send(:attr1)).to eq(new_value1)
+            expect(subject.public_send(:attr2)).to eq(new_value2)
+          end
+        end
+      end
+    end
+  end
+
   describe "#nested_attr_reader(attr, *key_path)" do
     let(:attrs) { { nested_attr_parent: { nested_attr: :nested_attr_value } } }
     before do
@@ -139,6 +213,55 @@ describe StackAdapt::Model::Definitions do
 
         it "should return false" do
           expect(subject.public_send(:nested_attr?)).to be_falsey
+        end
+      end
+    end
+  end
+
+  describe "#nested_attr_accessor(attr, *key_path)" do
+    let(:attrs) { { nested_attr_parent: { nested_attr: nil } } }
+
+    describe "reader and inflection methods" do
+      it "should call #nested_attr_reader with the attr and key path" do
+        expect(subject.class).to receive(:nested_attr_reader).with(:nested_attr, :nested_attr_parent)
+        StackAdapt::FakeModel.class_eval { nested_attr_reader :nested_attr, :nested_attr_parent }
+      end
+    end
+
+    describe "writer method" do
+      before do
+        StackAdapt::FakeModel.class_eval do
+          nested_attr_accessor :nested_attr, :nested_attr_parent
+        end
+      end
+
+      it "should define a writer method on the model" do
+        expect(subject.respond_to?(:nested_attr=)).to be_truthy
+      end
+
+      context "when a value is passed to the writer method" do
+        let(:new_value) { :new_nested_attr_value }
+        before { subject.nested_attr = new_value }
+
+        it "should update the attr on the model" do
+          expect(subject.public_send(:nested_attr)).to eq(new_value)
+        end
+
+        context "when another attr exists under the same parent" do
+          let(:attrs) { { nested_attr_parent: { nested_attr1: nil, nested_attr2: nil } } }
+          before do
+            StackAdapt::FakeModel.class_eval do
+              nested_attr_accessor :nested_attr, :nested_attr_parent
+              nested_attr_accessor :nested_attr2, :nested_attr_parent
+            end
+
+            subject.nested_attr2 = new_value
+          end
+
+          it "should not update the other attr under the same parent", :aggregate_failures do
+            expect(subject.public_send(:nested_attr)).to eq(new_value)
+            expect(subject.public_send(:nested_attr2)).to eq(new_value)
+          end
         end
       end
     end
@@ -239,6 +362,80 @@ describe StackAdapt::Model::Definitions do
     end
   end
 
+  describe "#date_attr_accessor(date_attrs)" do
+    context "when one date_attr is passed" do
+      let(:date_attrs) { { date_attr: :date_attr_value } }
+
+      describe "reader and inflection methods" do
+        it "should call #date_attr_reader with the date_attr" do
+          expect(subject.class).to receive(:date_attr_reader).with(:date_attr)
+          StackAdapt::FakeModel.class_eval { date_attr_accessor :date_attr }
+        end
+      end
+
+      describe "writer method" do
+        before do
+          StackAdapt::FakeModel.class_eval do
+            date_attr_accessor :date_attr
+          end
+        end
+
+        it "should define a writer method on the model" do
+          expect(subject.respond_to?(:date_attr=)).to be_truthy
+        end
+
+        context "when a value is passed to the writer method" do
+          let(:new_value) { DateTime.now }
+          before do
+            subject.date_attr = new_value
+          end
+
+          it "should update the date_attr on the model" do
+            expect(subject.public_send(:date_attr)).to be_within(1).of(new_value)
+          end
+        end
+      end
+    end
+
+    context "when multiple date_attrs are passed" do
+      let(:date_attrs) { { date_attr1: DateTime.now, date_attr2: DateTime.now } }
+
+      describe "reader and inflection methods" do
+        it "should call #date_attr_reader with the date_attrs" do
+          expect(subject.class).to receive(:date_attr_reader).with(:date_attr1, :date_attr2)
+          StackAdapt::FakeModel.class_eval { date_attr_accessor :date_attr1, :date_attr2 }
+        end
+      end
+
+      describe "writer methods" do
+        before do
+          StackAdapt::FakeModel.class_eval do
+            date_attr_accessor :date_attr1, :date_attr2
+          end
+        end
+
+        it "should define writer methods for each date_attr on the model", :aggregate_failures do
+          expect(subject.respond_to?(:date_attr1=)).to be_truthy
+          expect(subject.respond_to?(:date_attr2=)).to be_truthy
+        end
+
+        context "when a value is passed to the writer methods" do
+          let(:new_value1) { DateTime.now }
+          let(:new_value2) { DateTime.now }
+          before do
+            subject.date_attr1 = new_value1
+            subject.date_attr2 = new_value2
+          end
+
+          it "should update the date_attrs on the model", :aggregate_failures do
+            expect(subject.public_send(:date_attr1)).to be_within(1).of(new_value1)
+            expect(subject.public_send(:date_attr2)).to be_within(1).of(new_value2)
+          end
+        end
+      end
+    end
+  end
+
   describe "#object_attr_reader(attrs)" do
     let(:object_attr_value) { { obj_attr1: :obj_attr_value } }
     let(:attrs) { { object_attr: object_attr_value } }
@@ -282,6 +479,40 @@ describe StackAdapt::Model::Definitions do
 
         it "should return false" do
           expect(subject.public_send(:object_attr?)).to be_falsey
+        end
+      end
+    end
+  end
+
+  describe "#object_attr_accessor(object_attrs)" do
+    let(:object_attr_value) { { obj_attr1: :obj_attr_value } }
+    let(:attrs) { { object_attr: nil } }
+
+    describe "reader and inflection methods" do
+      it "should call #object_attr_reader with the object_attr" do
+        expect(subject.class).to receive(:object_attr_reader).with(:AssociatedFakeModel, :object_attr)
+        StackAdapt::FakeModel.class_eval { object_attr_accessor :AssociatedFakeModel, :object_attr }
+      end
+    end
+
+    describe "writer method" do
+      before do
+        StackAdapt::FakeModel.class_eval do
+          object_attr_accessor :AssociatedFakeModel, :object_attr
+        end
+      end
+
+      it "should define a writer method on the model" do
+        expect(subject.respond_to?(:object_attr=)).to be_truthy
+      end
+
+      context "when an object is passed to the writer method" do
+        before do
+          subject.object_attr = StackAdapt::AssociatedFakeModel.new(object_attr_value)
+        end
+
+        it "should update the object_attr on the model with the object's attrs" do
+          expect(subject.public_send(:object_attr).send(:attrs)).to eq(object_attr_value)
         end
       end
     end
@@ -339,4 +570,46 @@ describe StackAdapt::Model::Definitions do
       end
     end
   end
+
+  describe "#collection_object_attr_accessor(object_attrs)" do
+    let(:object1_attr_value) { { obj_attr1: :obj_attr_value } }
+    let(:object2_attr_value) { { obj_attr1: :obj_attr_value } }
+    let(:attrs) { { collection_object_attr: nil } }
+
+    describe "reader and inflection methods" do
+      it "should call #object_attr_reader with the object_attr" do
+        expect(subject.class).to receive(:collection_object_attr_reader).with(:AssociatedFakeModel, :collection_object_attr)
+        StackAdapt::FakeModel.class_eval { collection_object_attr_accessor :AssociatedFakeModel, :collection_object_attr }
+      end
+    end
+
+    describe "writer method" do
+      before do
+        StackAdapt::FakeModel.class_eval do
+          collection_object_attr_accessor :AssociatedFakeModel, :collection_object_attr
+        end
+      end
+
+      it "should define a writer method on the model" do
+        expect(subject.respond_to?(:collection_object_attr=)).to be_truthy
+      end
+
+      context "when an object is passed to the writer method" do
+        let(:faked_object1) { StackAdapt::AssociatedFakeModel.new(object1_attr_value) }
+        let(:faked_object2) { StackAdapt::AssociatedFakeModel.new(object2_attr_value) }
+
+        before do
+          subject.collection_object_attr = [faked_object1, faked_object2]
+        end
+
+        it "should update the object_attr on the model with the object's attrs" do
+          expect(StackAdapt::AssociatedFakeModel).to receive(:new).with(object1_attr_value).once.and_return(faked_object1)
+          expect(StackAdapt::AssociatedFakeModel).to receive(:new).with(object2_attr_value).once.and_return(faked_object2)
+
+          expect(subject.public_send(:collection_object_attr)).to include(faked_object1, faked_object2)
+        end
+      end
+    end
+  end
+
 end
