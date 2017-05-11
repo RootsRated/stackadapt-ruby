@@ -34,7 +34,7 @@ module StackAdapt
         end
 
         def options_key
-          request_method == :get ? :params : :form
+          request_method == :get ? :params : :json
         end
 
         def uri
