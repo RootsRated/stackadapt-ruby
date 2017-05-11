@@ -2,6 +2,9 @@
 engines:
   reek:
     enabled: true
+    checks:
+      IrresponsibleModule:
+        enabled: false
   bundler-audit:
     enabled: true
   duplication:
