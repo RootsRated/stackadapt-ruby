@@ -5,6 +5,10 @@ module StackAdapt
         Utils::QueryBuilder.new(self, client, args, payload)
       end
 
+      def auto_perform?
+        method != :get
+      end
+
       def collection?
         !!collection
       end

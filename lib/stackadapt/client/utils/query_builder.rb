@@ -11,6 +11,8 @@ module StackAdapt
 
         def initialize(subject, client, args, payload)
           @subject, @client, @args, @payload = subject, client, args, payload
+
+          query! if subject.auto_perform?
         end
 
         def results
