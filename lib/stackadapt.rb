@@ -6,6 +6,7 @@ module StackAdapt
   autoload :Model, 'stackadapt/model'
 
   autoload :Asset, 'stackadapt/models/asset'
+  autoload :Advertiser, 'stackadapt/models/advertiser'
   autoload :Campaign, 'stackadapt/models/campaign'
   autoload :ConversionTracker, 'stackadapt/models/conversion_tracker'
   autoload :NativeAd, 'stackadapt/models/native_ad'
