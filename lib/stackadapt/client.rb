@@ -3,6 +3,10 @@ module StackAdapt
     autoload :Route, 'stackadapt/client/route'
     autoload :Utils, 'stackadapt/client/utils'
 
+    autoload :Campaigns, 'stackadapt/client/routes/campaigns'
+    autoload :ConversionTrackers, 'stackadapt/client/routes/conversion_trackers'
+    autoload :NativeAds, 'stackadapt/client/routes/native_ads'
+
     attr_accessor :api_token, :api_version
 
     # Initializes a new Client object
