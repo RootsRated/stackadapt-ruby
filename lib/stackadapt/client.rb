@@ -1,7 +1,8 @@
-require 'stackadapt/client/utils'
-
 module StackAdapt
   class Client
+    autoload :Route, 'stackadapt/client/route'
+    autoload :Utils, 'stackadapt/client/utils'
+
     attr_accessor :api_token, :api_version
 
     # Initializes a new Client object

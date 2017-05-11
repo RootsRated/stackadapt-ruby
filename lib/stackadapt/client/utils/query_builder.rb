@@ -6,11 +6,11 @@ module StackAdapt
       class QueryBuilder
         extend Forwardable
 
-        attr_reader :subject, :client, :method, :endpoint, :args
+        attr_reader :subject, :client, :method, :endpoint, :args, :payload
         def_delegators :subject, :endpoint, :method, :collection?, :model_klass, :response_key
 
-        def initialize(subject, client, args)
-          @subject, @client, @args = subject, client, args
+        def initialize(subject, client, args, payload)
+          @subject, @client, @args, @payload = subject, client, args, payload
         end
 
         def results
@@ -20,7 +20,7 @@ module StackAdapt
         private
 
         def request_opts
-          @_request_opts ||= {}
+          @_request_opts ||= payload || {}
         end
 
         def append_query(opts_block, args)
@@ -31,8 +31,9 @@ module StackAdapt
         def response
           raise MissingParameters if endpoint_with_params.index(':')
 
-          Request.new(client, method, endpoint_with_params, request_opts).perform
+          @_response ||= Request.new(client, method, endpoint_with_params, request_opts).perform
         end
+        alias :query! :response
 
         def endpoint_with_params
           return endpoint unless endpoint.index(":")
@@ -66,7 +67,7 @@ module StackAdapt
           klass = model_klass if model_klass.is_a?(Class)
           klass ||= StackAdapt.const_get(model_klass) if model_klass.is_a?(Symbol) || model_klass.is_a?(String)
           klass ||= model_klass.call(result) if model_klass.respond_to?(:call)
-          klass.new(result)
+          klass.new(result).tap { |object| object.client = client }
         end
 
         class MissingParameters < StandardError; end
