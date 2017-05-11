@@ -3,6 +3,8 @@ engines:
   reek:
     enabled: true
     checks:
+      Attribute:
+        enabled: false
       IrresponsibleModule:
         enabled: false
   bundler-audit:
