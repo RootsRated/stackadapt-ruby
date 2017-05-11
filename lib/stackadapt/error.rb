@@ -63,7 +63,7 @@ module StackAdapt
     attr_reader :code
 
     def initialize(code = nil, body = nil, headers = [])
-      @code, @body, @headers = code || HTTP_ERRORS.invert[self.class], body, headers
+      @code, @body, @headers = (code || HTTP_ERRORS.invert[self.class]), body, headers
     end
 
     def message
