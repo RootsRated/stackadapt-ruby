@@ -19,7 +19,7 @@ module StackAdapt
         end
 
         def perform
-          response = HTTP.with(headers).public_send(request_method, uri.to_s, options_key => options)
+          response = HTTP.headers(headers).public_send(request_method, uri.to_s, options_key => options)
           response.parse.deep_symbolize_keys!
         rescue HTTP::Error => e
           error(response.status, response.body.to_s, response.headers)
